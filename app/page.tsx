@@ -1,166 +1,182 @@
 "use client";
 
-import {
-  Authenticated,
-  Unauthenticated,
-  useMutation,
-  useQuery,
-} from "convex/react";
-import { api } from "../convex/_generated/api";
 import Link from "next/link";
-import { SignUpButton } from "@clerk/nextjs";
-import { SignInButton } from "@clerk/nextjs";
 import { UserButton } from "@clerk/nextjs";
+import { ClerkLoaded, ClerkLoading, SignedIn, SignedOut } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, BarChart, Brain, CheckCircle, MessageSquare, Users } from "lucide-react";
+import { PageTransition } from "@/components/ui/page-transition";
+import { AnimatedElement } from "@/components/ui/animated-element";
+import { HoverEffect } from "@/components/ui/hover-effect";
+import { motion } from "framer-motion";
 
 export default function Home() {
   return (
-    <>
-      <header className="sticky top-0 z-10 bg-background p-4 border-b-2 border-slate-200 dark:border-slate-800 flex flex-row justify-between items-center">
-        Convex + Next.js + Clerk
-        <UserButton />
-      </header>
-      <main className="p-8 flex flex-col gap-8">
-        <h1 className="text-4xl font-bold text-center">
-          Convex + Next.js + Clerk
-        </h1>
-        <Authenticated>
-          <Content />
-        </Authenticated>
-        <Unauthenticated>
-          <SignInForm />
-        </Unauthenticated>
-      </main>
-    </>
-  );
-}
-
-function SignInForm() {
-  return (
-    <div className="flex flex-col gap-8 w-96 mx-auto">
-      <p>Log in to see the numbers</p>
-      <SignInButton mode="modal">
-        <button className="bg-foreground text-background px-4 py-2 rounded-md">
-          Sign in
-        </button>
-      </SignInButton>
-      <SignUpButton mode="modal">
-        <button className="bg-foreground text-background px-4 py-2 rounded-md">
-          Sign up
-        </button>
-      </SignUpButton>
-    </div>
-  );
-}
-
-function Content() {
-  const { viewer, numbers } =
-    useQuery(api.myFunctions.listNumbers, {
-      count: 10,
-    }) ?? {};
-  const addNumber = useMutation(api.myFunctions.addNumber);
-
-  if (viewer === undefined || numbers === undefined) {
-    return (
-      <div className="mx-auto">
-        <p>loading... (consider a loading skeleton)</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col gap-8 max-w-lg mx-auto">
-      <p>Welcome {viewer ?? "Anonymous"}!</p>
-      <p>
-        Click the button below and open this page in another window - this data
-        is persisted in the Convex cloud database!
-      </p>
-      <p>
-        <button
-          className="bg-foreground text-background text-sm px-4 py-2 rounded-md"
-          onClick={() => {
-            void addNumber({ value: Math.floor(Math.random() * 10) });
-          }}
+    <PageTransition>
+      <div className="flex flex-col min-h-screen">
+        <motion.header
+          className="sticky top-0 z-10 bg-background p-4 border-b border-slate-200 dark:border-slate-800 flex flex-row justify-between items-center"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
         >
-          Add a random number
-        </button>
-      </p>
-      <p>
-        Numbers:{" "}
-        {numbers?.length === 0
-          ? "Click the button!"
-          : (numbers?.join(", ") ?? "...")}
-      </p>
-      <p>
-        Edit{" "}
-        <code className="text-sm font-bold font-mono bg-slate-200 dark:bg-slate-800 px-1 py-0.5 rounded-md">
-          convex/myFunctions.ts
-        </code>{" "}
-        to change your backend
-      </p>
-      <p>
-        Edit{" "}
-        <code className="text-sm font-bold font-mono bg-slate-200 dark:bg-slate-800 px-1 py-0.5 rounded-md">
-          app/page.tsx
-        </code>{" "}
-        to change your frontend
-      </p>
-      <p>
-        See the{" "}
-        <Link href="/server" className="underline hover:no-underline">
-          /server route
-        </Link>{" "}
-        for an example of loading data in a server component
-      </p>
-      <div className="flex flex-col">
-        <p className="text-lg font-bold">Useful resources:</p>
-        <div className="flex gap-2">
-          <div className="flex flex-col gap-2 w-1/2">
-            <ResourceCard
-              title="Convex docs"
-              description="Read comprehensive documentation for all Convex features."
-              href="https://docs.convex.dev/home"
-            />
-            <ResourceCard
-              title="Stack articles"
-              description="Learn about best practices, use cases, and more from a growing
-            collection of articles, videos, and walkthroughs."
-              href="https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
-            />
+          <div className="flex items-center gap-2">
+            <motion.span 
+              className="font-bold text-xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              Vortex CS
+            </motion.span>
           </div>
-          <div className="flex flex-col gap-2 w-1/2">
-            <ResourceCard
-              title="Templates"
-              description="Browse our collection of templates to get started quickly."
-              href="https://www.convex.dev/templates"
-            />
-            <ResourceCard
-              title="Discord"
-              description="Join our developer community to ask questions, trade tips & tricks,
-            and show off your projects."
-              href="https://www.convex.dev/community"
-            />
+          <div className="flex items-center gap-4">
+            <SignedIn>
+              <Link href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
+                Dashboard
+              </Link>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
+            <SignedOut>
+              <Link href="/sign-in">
+                <Button variant="ghost" size="sm">Entrar</Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button size="sm">Cadastrar</Button>
+              </Link>
+            </SignedOut>
           </div>
-        </div>
+        </motion.header>
+
+        <main className="flex-1">
+
+          {/* Hero Section */}
+          <section className="py-20 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+            <div className="max-w-6xl mx-auto text-center">
+              <AnimatedElement type="fade">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+                  Plataforma de <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Customer Success</span> com Inteligência Artificial
+                </h1>
+              </AnimatedElement>
+              
+              <AnimatedElement type="fade" delay={0.2}>
+                <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto mb-10">
+                  Otimize a gestão do relacionamento com clientes B2B, consolide interações, feedback e acompanhe o progresso de projetos com insights de IA.
+                </p>
+              </AnimatedElement>
+              
+              <AnimatedElement type="slideUp" delay={0.4}>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <SignedIn>
+                    <Link href="/dashboard">
+                      <Button size="lg" className="w-full sm:w-auto group">
+                        Acessar Dashboard
+                        <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
+                  </SignedIn>
+                  <SignedOut>
+                    <Link href="/sign-up">
+                      <Button size="lg" className="w-full sm:w-auto group">
+                        Começar Agora
+                        <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
+                    <Link href="/sign-in">
+                      <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                        Entrar na Plataforma
+                      </Button>
+                    </Link>
+                  </SignedOut>
+                </div>
+              </AnimatedElement>
+            </div>
+          </section>
+
+          {/* Features Section */}
+          <section className="py-16 px-4 md:px-6 lg:px-8 bg-white dark:bg-slate-900">
+            <div className="max-w-6xl mx-auto">
+              <AnimatedElement type="fade">
+                <h2 className="text-3xl font-bold text-center mb-12">Funcionalidades Principais</h2>
+              </AnimatedElement>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <AnimatedElement type="scale" delay={0.1}>
+                  <FeatureCard 
+                    icon={<Users className="text-blue-500" />}
+                    title="Gerenciamento de Clientes"
+                    description="Cadastro e edição de informações de clientes B2B, com gerenciamento de múltiplos projetos por cliente."
+                  />
+                </AnimatedElement>
+                
+                <AnimatedElement type="scale" delay={0.2}>
+                  <FeatureCard 
+                    icon={<BarChart className="text-indigo-500" />}
+                    title="Dashboard de Status"
+                    description="Visualização centralizada do andamento de todos os projetos com indicadores visuais de progresso."
+                  />
+                </AnimatedElement>
+                
+                <AnimatedElement type="scale" delay={0.3}>
+                  <FeatureCard 
+                    icon={<CheckCircle className="text-green-500" />}
+                    title="Avaliações de Satisfação"
+                    description="Criação e envio de formulários de avaliação (NPS, CSAT, MHS) com visualização de histórico."
+                  />
+                </AnimatedElement>
+                
+                <AnimatedElement type="scale" delay={0.4}>
+                  <FeatureCard 
+                    icon={<MessageSquare className="text-yellow-500" />}
+                    title="Gestão de Feedback"
+                    description="Interface para clientes registrarem feedbacks e painel para a equipe de CS visualizar e responder."
+                  />
+                </AnimatedElement>
+                
+                <AnimatedElement type="scale" delay={0.5}>
+                  <FeatureCard 
+                    icon={<Brain className="text-purple-500" />}
+                    title="Insights com IA"
+                    description="Análise de sentimento, extração de tópicos chave e predição de churn com inteligência artificial."
+                  />
+                </AnimatedElement>
+                
+                <AnimatedElement type="scale" delay={0.6}>
+                  <FeatureCard 
+                    icon={<ArrowRight className="text-red-500" />}
+                    title="Integrações"
+                    description="Conexão com Jira, Power BI e outras ferramentas para sincronização de dados e análises avançadas."
+                  />
+                </AnimatedElement>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <motion.footer 
+          className="bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-8 px-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.5 }}
+        >
+          <div className="max-w-6xl mx-auto text-center text-sm text-slate-600 dark:text-slate-400">
+            <p>© {new Date().getFullYear()} Vortex CS - Plataforma de Customer Success com IA</p>
+          </div>
+        </motion.footer>
       </div>
-    </div>
+    </PageTransition>
   );
 }
 
-function ResourceCard({
-  title,
-  description,
-  href,
-}: {
-  title: string;
-  description: string;
-  href: string;
-}) {
+function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
   return (
-    <div className="flex flex-col gap-2 bg-slate-200 dark:bg-slate-800 p-4 rounded-md h-28 overflow-auto">
-      <a href={href} className="text-sm underline hover:no-underline">
-        {title}
-      </a>
-      <p className="text-xs">{description}</p>
-    </div>
+    <HoverEffect className="bg-slate-50 dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
+      <div className="mb-4 p-2 inline-block rounded-full bg-slate-100 dark:bg-slate-700">
+        <motion.div whileHover={{ rotate: 10 }} transition={{ type: "spring", stiffness: 400 }}>
+          {icon}
+        </motion.div>
+      </div>
+      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-slate-600 dark:text-slate-400">{description}</p>
+    </HoverEffect>
   );
 }

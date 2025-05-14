@@ -1,51 +1,82 @@
-# Welcome to your Convex + Next.js + Clerk app
+# Plataforma de Customer Success (CS) com Inteligência Artificial
 
-This is a [Convex](https://convex.dev/) project created with [`npm create convex`](https://www.npmjs.com/package/create-convex).
+## 1. Visão Geral do Projeto
 
-After the initial setup (<2 minutes) you'll have a working full-stack app using:
+Este projeto visa desenvolver uma plataforma robusta e centralizada para a área de Customer Success (CS) da FH. O objetivo principal é otimizar a gestão do relacionamento com clientes B2B, consolidando interações, feedback, avaliações de satisfação (NPS, CSAT, MHS) e o acompanhamento transparente do progresso de projetos. A plataforma será enriquecida com recursos de Inteligência Artificial (IA) para fornecer insights valiosos sobre os clientes, prever a probabilidade de churn, e se integrará com ferramentas como Power BI para análises avançadas e Jira para sincronização de status de projetos.
 
-- Convex as your backend (database, server logic)
-- [React](https://react.dev/) as your frontend (web page interactivity)
-- [Next.js](https://nextjs.org/) for optimized web hosting and page routing
-- [Tailwind](https://tailwindcss.com/) for building great looking accessible UI
-- [Clerk](https://clerk.com/) for authentication
+## 2. Personas (Público-Alvo)
 
-## Get started
+* **Profissional de CS da FH:** Responsável por monitorar a satisfação dos clientes, aplicar avaliações, gerenciar o relacionamento e garantir uma comunicação efetiva.
+* **Cliente B2B:** Empresas que contratam os serviços da FH e necessitam acompanhar o andamento de seus projetos, fornecer feedback e acessar documentações.
+* **Gerente de Projetos:** Utiliza a plataforma para manter a transparência nas entregas, comunicar-se com os clientes e visualizar feedbacks para ajustes de rota.
 
-If you just cloned this codebase and didn't use `npm create convex`, run:
+## 3. Funcionalidades Principais
 
-```
-npm install
-npm run dev
-```
+A plataforma oferecerá um conjunto de funcionalidades essenciais para a gestão de CS:
 
-If you're reading this README on GitHub and want to use this template, run:
+* **Gestão de Autenticação e Níveis de Acesso (com Clerk):**
+    * Login seguro para clientes e equipe interna utilizando Clerk.
+    * Diferentes níveis de permissão e papéis (ex: CS, Cliente, Gerente de Projeto) gerenciados através do Clerk e/ou lógica no Convex.
+* **Gerenciamento de Clientes e Projetos (CRUD):**
+    * Cadastro e edição de informações de clientes B2B.
+    * Criação, acompanhamento e gerenciamento de múltiplos projetos por cliente.
+* **Dashboard de Status de Projetos:**
+    * Visualização centralizada do andamento de todos os projetos.
+    * Indicadores visuais (gráficos) de progresso.
+    * Filtros e ordenação para fácil navegação.
+* **Sistema de Avaliações de Satisfação:**
+    * Criação e envio de formulários de avaliação (NPS, CSAT, MHS).
+    * Armazenamento organizado das respostas no banco de dados Convex.
+    * Visualização de histórico e resultados consolidados por cliente e projeto.
+* **Coleta e Gestão de Feedback:**
+    * Interface para clientes registrarem feedbacks de forma estruturada ou não estruturada.
+    * Painel para a equipe de CS visualizar, categorizar, priorizar e responder aos feedbacks.
+* **Módulo de Comunicação e Compartilhamento de Documentos (com Convex):**
+    * Canal de comunicação (chat/feed) para interações rápidas, utilizando as capacidades real-time do Convex.
+    * Armazenamento e compartilhamento seguro de documentos relevantes aos projetos, utilizando o file storage do Convex.
+* **Logs de Atividades e Acordos:**
+    * Registro estruturado de interações chave, decisões, acordos e atas de reunião.
+    * Histórico de atividades por projeto e cliente.
+* **Sistema de Notificações:**
+    * Alertas via e-mail (e potencialmente WhatsApp) sobre eventos importantes (ex: novo feedback, atualização de projeto, avaliação pendente).
+* **Sistema de Status de Projeto Aprimorado:**
+    * Definição de estágios e sub-status detalhados.
+    * Linhas do tempo visuais e alertas para gargalos.
 
-```
-npm create convex@latest -- -t nextjs-clerk
-```
+## 4. Recursos de Inteligência Artificial (IA)
 
-Then:
+A IA será integrada para agregar valor e inteligência à plataforma:
 
-1. Open your app. There should be a "Claim your application" button from Clerk in the bottom right of your app.
-2. Follow the steps to claim your application and link it to this app.
-3. Follow step 3 in the [Convex Clerk onboarding guide](https://docs.convex.dev/auth/clerk#get-started) to create a Convex JWT template.
-4. Uncomment the Clerk provider in `convex/auth.config.ts`
-5. Paste the Issuer URL as `CLERK_JWT_ISSUER_DOMAIN` to your dev deployment environment variable settings on the Convex dashboard (see [docs](https://docs.convex.dev/auth/clerk#configuring-dev-and-prod-instances))
+* **IA Conversacional com Insights sobre o Cliente:**
+    * **Análise de Sentimento:** Processamento de linguagem natural (NLP) para analisar textos de feedbacks, comunicações e avaliações, classificando o sentimento (positivo, negativo, neutro).
+    * **Extração de Tópicos Chave:** Identificação automática dos principais temas e problemas mencionados pelos clientes.
+    * **Sumarização:** Geração de resumos de longas conversas ou múltiplos feedbacks.
+* **Scores de Predição de Churn:**
+    * Modelo de Machine Learning (ML) para calcular a probabilidade de um cliente cancelar o serviço.
+    * Utiliza dados históricos e features como engajamento, satisfação (NPS/CSAT), frequência de problemas, e interações para prever riscos.
+    * Alertas para a equipe de CS sobre clientes com alto risco de churn, permitindo ações proativas.
 
-If you want to sync Clerk user data via webhooks, check out this [example repo](https://github.com/thomasballinger/convex-clerk-users-table/).
+## 5. Integrações
 
-## Learn more
+* **Jira:** Integração para sincronização automática do status das tarefas e projetos, garantindo que a plataforma reflita o progresso real do desenvolvimento/entrega.
+* **Power BI:** Conexão com o banco de dados Convex (via exportação de dados ou APIs, se aplicável) para permitir análises de dados avançadas, criação de dashboards personalizados e relatórios gerenciais pela equipe da FH.
+* **WhatsApp Business API (Potencial):** Para envio de notificações e comunicação direta (requer configuração e custos associados à API).
+* **Provedores de Email Transacional (ex: SendGrid, Resend):** Para o envio de notificações por email.
+* **Clerk:** Para gerenciamento de autenticação e usuários.
 
-To learn more about developing your project with Convex, check out:
+## 6. Stack Tecnológica Principal
 
-- The [Tour of Convex](https://docs.convex.dev/get-started) for a thorough introduction to Convex principles.
-- The rest of [Convex docs](https://docs.convex.dev/) to learn about all Convex features.
-- [Stack](https://stack.convex.dev/) for in-depth articles on advanced topics.
+* **Frontend:** React.js com TypeScript, TailwindCSS para estilização.
+* **Autenticação:** Clerk.
+* **Backend & Banco de Dados:** Convex (plataforma de backend full-stack com banco de dados reativo integrado, funções serverless TypeScript/JavaScript, armazenamento de arquivos e funcionalidades em tempo real).
+* **Serviços de IA/ML:** Python (com Flask/FastAPI) para os microserviços de IA, utilizando bibliotecas como scikit-learn, Pandas, e integração com APIs de LLMs (OpenAI, Google Gemini) ou modelos open-source (Hugging Face).
+* **Deployment:** Vercel para o frontend; Convex gerencia seu próprio deployment para o backend.
 
-## Join the community
+## 7. API para Consulta
 
-Join thousands of developers building full-stack apps with Convex:
+* A plataforma disponibilizará uma API através das funções de backend do Convex (query e mutation functions).
+* Estas funções permitirão que sistemas externos ou outras partes da aplicação consultem e manipulem dados de clientes, projetos, avaliações, insights de IA, etc., de forma segura e controlada, respeitando as regras de autenticação e autorização definidas com Clerk e Convex.
 
-- Join the [Convex Discord community](https://convex.dev/community) to get help in real-time.
-- Follow [Convex on GitHub](https://github.com/get-convex/), star and contribute to the open-source implementation of Convex.
+---
+
+Este README.md fornece um contexto abrangente sobre a plataforma, suas funcionalidades e a tecnologia envolvida.

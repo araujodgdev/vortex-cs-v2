@@ -5,166 +5,181 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Brain, TrendingUp, AlertTriangle, CheckCircle, BarChart3, Users, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageTransition } from "@/components/ui/page-transition";
+import { AnimatedElement } from "@/components/ui/animated-element";
+import { motion } from "framer-motion";
 
 export default function AIInsightsPage() {
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">AI Insights</h1>
-          <p className="text-muted-foreground">
-            AI-powered recommendations and insights for customer success
-          </p>
-        </div>
-        <Button>
-          <Brain className="h-4 w-4 mr-2" />
-          Generate New Insights
-        </Button>
-      </div>
-
-      <Tabs defaultValue="recommendations" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
-          <TabsTrigger value="trends">Trend Analysis</TabsTrigger>
-          <TabsTrigger value="risks">Risk Detection</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="recommendations" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer Success Recommendations</CardTitle>
-              <CardDescription>
-                AI-generated recommendations to improve customer success metrics
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <RecommendationCard 
-                title="Onboarding Process Improvement"
-                description="Analysis of recent onboarding sessions suggests that customers struggle with the API integration step. Consider creating additional documentation or video tutorials."
-                impact="High"
-                category="Onboarding"
-                effort="Medium"
-              />
-              
-              <RecommendationCard 
-                title="Feature Adoption Campaign"
-                description="12 enterprise customers haven't utilized the new reporting features. A targeted email campaign with use cases could increase adoption by an estimated 35%."
-                impact="Medium"
-                category="Feature Adoption"
-                effort="Low"
-              />
-              
-              <RecommendationCard 
-                title="Customer Success Team Expansion"
-                description="Response times have increased by 15% in the last quarter. Based on growth projections, consider hiring 2 additional CSMs in the next 3 months."
-                impact="High"
-                category="Team Resources"
-                effort="High"
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="trends" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Customer Sentiment Trend</CardTitle>
-                <CardDescription>
-                  Analysis of customer conversations over time
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px] flex items-center justify-center bg-muted/20 rounded-md">
-                  <TrendingUp className="h-8 w-8 text-muted-foreground" />
-                  <span className="ml-2 text-sm text-muted-foreground">Sentiment trend visualization would go here</span>
-                </div>
-                <div className="mt-4 space-y-2">
-                  <TrendInsight 
-                    title="Positive trend in UI/UX feedback"
-                    description="Positive mentions of the new UI have increased by 27% since the latest release."
-                  />
-                  <TrendInsight 
-                    title="Decreasing concerns about performance"
-                    description="Mentions of performance issues have decreased by 18% in the last 30 days."
-                  />
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Feature Usage Trends</CardTitle>
-                <CardDescription>
-                  Most and least used features over time
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px] flex items-center justify-center bg-muted/20 rounded-md">
-                  <BarChart3 className="h-8 w-8 text-muted-foreground" />
-                  <span className="ml-2 text-sm text-muted-foreground">Feature usage visualization would go here</span>
-                </div>
-                <div className="mt-4 space-y-2">
-                  <TrendInsight 
-                    title="Analytics dashboard usage increasing"
-                    description="Usage of the analytics dashboard has grown by 42% month-over-month."
-                  />
-                  <TrendInsight 
-                    title="API integration underutilized"
-                    description="Only 23% of eligible customers are using the API integration features."
-                  />
-                </div>
-              </CardContent>
-            </Card>
+    <PageTransition>
+      <div className="flex flex-col gap-5">
+        <AnimatedElement type="fade">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Insights de IA</h1>
+              <p className="text-muted-foreground">
+                Recomendações e insights baseados em IA para o sucesso do cliente
+              </p>
+            </div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button>
+                <Brain className="h-4 w-4 mr-2" />
+                Gerar Novos Insights
+              </Button>
+            </motion.div>
           </div>
-        </TabsContent>
-        
-        <TabsContent value="risks" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer Risk Assessment</CardTitle>
-              <CardDescription>
-                AI-detected potential risks requiring attention
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <RiskCard 
-                customer="Acme Inc"
-                risk="Churn Risk"
-                probability={75}
-                signals={[
-                  { id: "signal-1", text: "Decreased usage in last 30 days" },
-                  { id: "signal-2", text: "Support tickets about competitor features" },
-                  { id: "signal-3", text: "Contract renewal in 45 days" }
-                ]}
-              />
+        </AnimatedElement>
+
+        <Tabs defaultValue="recommendations" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="recommendations">Recomendações</TabsTrigger>
+            <TabsTrigger value="trends">Análise de Tendências</TabsTrigger>
+            <TabsTrigger value="risks">Detecção de Riscos</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="recommendations" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Recomendações de Sucesso do Cliente</CardTitle>
+                <CardDescription>
+                  Recomendações geradas por IA para melhorar as métricas de sucesso do cliente
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <AnimatedElement type="slide" delay={0.1}>
+                  <RecommendationCard 
+                    title="Melhoria do Processo de Onboarding"
+                    description="A análise de sessões recentes de onboarding sugere que os clientes enfrentam dificuldades na etapa de integração da API. Considere criar documentação adicional ou tutoriais em vídeo."
+                    impact="Alta"
+                    category="Onboarding"
+                    effort="Média"
+                  />
+                </AnimatedElement>
+                
+                <AnimatedElement type="slide" delay={0.2}>
+                  <RecommendationCard 
+                    title="Campanha de Adoção de Recursos"
+                    description="12 clientes empresariais não utilizaram os novos recursos de relatórios. Uma campanha de email direcionada com casos de uso poderia aumentar a adoção em cerca de 35%."
+                    impact="Média"
+                    category="Adoção de Recursos"
+                    effort="Baixa"
+                  />
+                </AnimatedElement>
+                
+                <AnimatedElement type="slide" delay={0.3}>
+                  <RecommendationCard 
+                    title="Expansão da Equipe de Sucesso do Cliente"
+                    description="Os tempos de resposta aumentaram 15% no último trimestre. Com base nas projeções de crescimento, considere contratar 2 CSMs adicionais nos próximos 3 meses."
+                    impact="Alta"
+                    category="Recursos da Equipe"
+                    effort="Alta"
+                  />
+                </AnimatedElement>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="trends" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tendência de Sentimento do Cliente</CardTitle>
+                  <CardDescription>
+                    Análise de conversas com clientes ao longo do tempo
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px] flex items-center justify-center bg-muted/20 rounded-md">
+                    <TrendingUp className="h-8 w-8 text-muted-foreground" />
+                    <span className="ml-2 text-sm text-muted-foreground">Visualização de tendência de sentimento seria exibida aqui</span>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    <TrendInsight 
+                      title="Tendência positiva no feedback sobre UI/UX"
+                      description="Menções positivas sobre a nova UI aumentaram 27% desde o último lançamento."
+                    />
+                    <TrendInsight 
+                      title="Redução nas preocupações sobre desempenho"
+                      description="Menções de problemas de desempenho diminuíram 18% nos últimos 30 dias."
+                    />
+                  </div>
+                </CardContent>
+              </Card>
               
-              <RiskCard 
-                customer="TechGiant"
-                risk="Expansion Blocker"
-                probability={62}
-                signals={[
-                  { id: "signal-4", text: "Multiple requests for enterprise features" },
-                  { id: "signal-5", text: "Usage at subscription limit for 3 consecutive months" },
-                  { id: "signal-6", text: "Competitor evaluation mentioned in recent call" }
-                ]}
-              />
-              
-              <RiskCard 
-                customer="Global Services"
-                risk="Adoption Issues"
-                probability={58}
-                signals={[
-                  { id: "signal-7", text: "Only using 2 of 5 core features" },
-                  { id: "signal-8", text: "Low engagement from admin users" },
-                  { id: "signal-9", text: "Onboarding incomplete for 4 team members" }
-                ]}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tendências de Uso de Recursos</CardTitle>
+                  <CardDescription>
+                    Recursos mais e menos utilizados ao longo do tempo
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px] flex items-center justify-center bg-muted/20 rounded-md">
+                    <BarChart3 className="h-8 w-8 text-muted-foreground" />
+                    <span className="ml-2 text-sm text-muted-foreground">Visualização de uso de recursos seria exibida aqui</span>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    <TrendInsight 
+                      title="Uso do dashboard de análises em crescimento"
+                      description="O uso do dashboard de análises cresceu 42% mês a mês."
+                    />
+                    <TrendInsight 
+                      title="Integração de API subutilizada"
+                      description="Apenas 23% dos clientes elegíveis estão usando os recursos de integração de API."
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="risks" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Avaliação de Risco do Cliente</CardTitle>
+                <CardDescription>
+                  Riscos potenciais detectados por IA que requerem atenção
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <RiskCard 
+                  customer="Acme Inc"
+                  risk="Risco de Churn"
+                  probability={75}
+                  signals={[
+                    { id: "signal-1", text: "Uso reduzido nos últimos 30 dias" },
+                    { id: "signal-2", text: "Tickets de suporte sobre recursos de concorrentes" },
+                    { id: "signal-3", text: "Renovação de contrato em 45 dias" }
+                  ]}
+                />
+                
+                <RiskCard 
+                  customer="TechGiant"
+                  risk="Bloqueador de Expansão"
+                  probability={62}
+                  signals={[
+                    { id: "signal-4", text: "Múltiplos pedidos de recursos empresariais" },
+                    { id: "signal-5", text: "Uso no limite da assinatura por 3 meses consecutivos" },
+                    { id: "signal-6", text: "Avaliação de concorrente mencionada em chamada recente" }
+                  ]}
+                />
+                
+                <RiskCard 
+                  customer="Global Services"
+                  risk="Problemas de Adoção"
+                  probability={58}
+                  signals={[
+                    { id: "signal-7", text: "Usando apenas 2 de 5 recursos principais" },
+                    { id: "signal-8", text: "Baixo engajamento de usuários administradores" },
+                    { id: "signal-9", text: "Onboarding incompleto para 4 membros da equipe" }
+                  ]}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </PageTransition>
   );
 }
 
@@ -177,24 +192,24 @@ function RecommendationCard({
 }: { 
   title: string; 
   description: string; 
-  impact: "High" | "Medium" | "Low";
+  impact: "Alta" | "Média" | "Baixa";
   category: string;
-  effort: "High" | "Medium" | "Low";
+  effort: "Alta" | "Média" | "Baixa";
 }) {
   const getImpactColor = (impact: string) => {
     switch (impact) {
-      case "High": return "text-green-500";
-      case "Medium": return "text-amber-500";
-      case "Low": return "text-blue-500";
+      case "Alta": return "text-green-500";
+      case "Média": return "text-amber-500";
+      case "Baixa": return "text-blue-500";
       default: return "text-muted-foreground";
     }
   };
   
   const getEffortBadge = (effort: string) => {
     switch (effort) {
-      case "High": return "destructive";
-      case "Medium": return "secondary";
-      case "Low": return "outline";
+      case "Alta": return "destructive";
+      case "Média": return "secondary";
+      case "Baixa": return "outline";
       default: return "default";
     }
   };
@@ -208,11 +223,11 @@ function RecommendationCard({
       <p className="text-sm text-muted-foreground mb-3">{description}</p>
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-1">
-          <span className="text-xs font-medium">Impact:</span>
+          <span className="text-xs font-medium">Impacto:</span>
           <span className={`text-xs font-semibold ${getImpactColor(impact)}`}>{impact}</span>
         </div>
         <Badge variant={getEffortBadge(effort) as "default" | "destructive" | "secondary" | "outline"}>
-          {effort} Effort
+          Esforço {effort}
         </Badge>
       </div>
     </div>
@@ -275,7 +290,7 @@ function RiskCard({
         </div>
       </div>
       <div className="mt-3">
-        <h5 className="text-xs font-medium mb-1">Risk Signals:</h5>
+        <h5 className="text-xs font-medium mb-1">Sinais de Risco:</h5>
         <ul className="text-xs text-muted-foreground space-y-1">
           {signals.map((signal) => (
             <li key={signal.id} className="flex items-start gap-1">
