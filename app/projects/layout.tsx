@@ -4,15 +4,16 @@ import { UserButton } from "@clerk/nextjs";
 import { ReactNode } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 import { 
   BarChart3, 
   Users, 
   MessageSquare, 
-  Calendar,
-  FileText,
+  BarChart, 
+  Settings,
   Home,
-  Settings
+  Bot
 } from "lucide-react";
 
 export default function ProjectsLayout({
@@ -23,49 +24,69 @@ export default function ProjectsLayout({
   return (
     <div className="relative min-h-screen">
       {/* Sidebar */}
-      <aside className="fixed inset-y-0 left-0 w-64 bg-background border-r border-border hidden md:flex flex-col">
-        <div className="p-6 border-b">
-          <h2 className="text-2xl font-bold">Vortex CS</h2>
-          <p className="text-sm text-muted-foreground">Acompanhamento de Projetos</p>
+      <motion.aside 
+        className="fixed inset-y-0 left-0 w-64 bg-background border-r border-border hidden md:flex flex-col"
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      >
+        <div className="p-6 border-b border-border">
+          <h2 className="text-2xl font-bold">
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+              className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent"
+            >
+              Vortex CS
+            </motion.span>
+          </h2>
+          <motion.p 
+            className="text-sm text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.3 }}
+          >
+            Gerenciamento de Projetos
+          </motion.p>
         </div>
+
         <nav className="flex-1 p-4">
-          <ul className="space-y-1">
-            <NavItem href="/projects" icon={<Home className="w-5 h-5" />}>
+          <ul className="space-y-2">
+            <AnimatedNavItem href="/projects" icon={<Home className="h-5 w-5" />} delay={0.1}>
               Visão Geral
-            </NavItem>
-            <NavItem href="/projects/documents" icon={<FileText className="w-5 h-5" />}>
-              Documentos
-            </NavItem>
-            <NavItem href="/projects/meetings" icon={<Calendar className="w-5 h-5" />}>
-              Reuniões
-            </NavItem>
-            <NavItem href="/projects/team" icon={<Users className="w-5 h-5" />}>
-              Equipe
-            </NavItem>
-            <NavItem href="/projects/feedback" icon={<MessageSquare className="w-5 h-5" />}>
-              Feedback
-            </NavItem>
-            <NavItem href="/projects/analytics" icon={<BarChart3 className="w-5 h-5" />}>
-              Análises
-            </NavItem>
-            <NavItem href="/projects/settings" icon={<Settings className="w-5 h-5" />}>
+            </AnimatedNavItem>
+            <AnimatedNavItem href="/projects/active" icon={<BarChart3 className="h-5 w-5" />} delay={0.2}>
+              Projetos Ativos
+            </AnimatedNavItem>
+            <AnimatedNavItem href="/projects/completed" icon={<MessageSquare className="h-5 w-5" />} delay={0.3}>
+              Projetos Concluídos
+            </AnimatedNavItem>
+            <AnimatedNavItem href="/projects/settings" icon={<Settings className="h-5 w-5" />} delay={0.4}>
               Configurações
-            </NavItem>
+            </AnimatedNavItem>
           </ul>
         </nav>
-      </aside>
+      </motion.aside>
 
       {/* Main Content */}
       <div className="md:pl-64">
         {/* Header */}
-        <header className="sticky top-0 z-10 bg-background border-b h-16 flex items-center px-6">
+        <motion.header 
+          className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border h-16 flex items-center px-6"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4 }}
+        >
           <div className="flex-1 md:hidden">
-            <h2 className="text-lg font-semibold">Vortex CS</h2>
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+              Vortex CS
+            </h2>
           </div>
           <div className="flex items-center gap-4 ml-auto">
             <UserButton afterSignOutUrl="/" />
           </div>
-        </header>
+        </motion.header>
 
         {/* Page Content */}
         <main className="p-6">
@@ -76,27 +97,34 @@ export default function ProjectsLayout({
   );
 }
 
-function NavItem({ 
+function AnimatedNavItem({ 
   href, 
   icon, 
-  children 
+  children,
+  delay = 0
 }: { 
   href: string; 
   icon: ReactNode; 
-  children: ReactNode 
+  children: ReactNode;
+  delay?: number;
 }) {
   return (
-    <li>
-      <Link 
-        href={href} 
+    <motion.li
+      initial={{ x: -20, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ delay, duration: 0.3 }}
+    >
+      <Link
+        href={href}
         className={cn(
-          "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground",
-          "transition-colors"
+          "flex items-center gap-3 px-4 py-2 text-sm rounded-lg transition-colors",
+          "text-muted-foreground hover:text-foreground hover:bg-primary/10",
+          "aria-[current=page]:text-primary aria-[current=page]:bg-primary/10"
         )}
       >
         {icon}
         <span>{children}</span>
       </Link>
-    </li>
+    </motion.li>
   );
 }

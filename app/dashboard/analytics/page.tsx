@@ -2,27 +2,62 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, LineChart, PieChart, Calendar, Download } from "lucide-react";
+import { BarChart3, LineChart, PieChart, Calendar as CalendarIcon, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageTransition } from "@/components/ui/page-transition";
 import { AnimatedElement } from "@/components/ui/animated-element";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { DateRange } from "react-day-picker";
 
 export default function AnalyticsPage() {
+  const [selectedPeriod, setSelectedPeriod] = useState("30d");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const handleDownload = () => {
+    // Aqui você pode implementar a lógica de download dos dados
+    // Por exemplo, gerar um CSV com os dados do período selecionado
+    const data = {
+      period: selectedPeriod,
+      dateRange,
+      // Adicione aqui os dados que você quer exportar
+    };
+    
+    const jsonString = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `analytics-${format(new Date(), "yyyy-MM-dd")}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <PageTransition>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-6">
         <AnimatedElement type="fade">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Análises</h1>
+              <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
               <p className="text-muted-foreground">
-                Métricas de sucesso do cliente e indicadores de desempenho
+                Acompanhe as métricas e insights do seu negócio
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Select defaultValue="30d">
+              <Select 
+                defaultValue="30d"
+                value={selectedPeriod}
+                onValueChange={setSelectedPeriod}
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Período" />
                 </SelectTrigger>
@@ -33,10 +68,39 @@ export default function AnalyticsPage() {
                   <SelectItem value="12m">Últimos 12 meses</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" size="icon">
-                <Calendar className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon">
+              <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[240px] justify-start text-left font-normal">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateRange?.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, "dd/MM/yyyy", { locale: ptBR })} -{" "}
+                          {format(dateRange.to, "dd/MM/yyyy", { locale: ptBR })}
+                        </>
+                      ) : (
+                        format(dateRange.from, "dd/MM/yyyy", { locale: ptBR })
+                      )
+                    ) : (
+                      <span>Selecione um período</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={dateRange?.from || new Date()}
+                    selected={dateRange}
+                    onSelect={setDateRange}
+                    numberOfMonths={2}
+                    locale={ptBR}
+                    weekStartsOn={0}
+                    ISOWeek={false}
+                  />
+                </PopoverContent>
+              </Popover>
+              <Button variant="outline" size="icon" onClick={handleDownload}>
                 <Download className="h-4 w-4" />
               </Button>
             </div>

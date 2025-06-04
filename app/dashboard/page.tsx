@@ -32,43 +32,67 @@ export default function DashboardPage() {
           </motion.div>
           
           <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <AnimatedElement type="slide" delay={0.1}>
-                <MetricCard 
-                  title="Total de Clientes" 
-                  value="284"
-                  description="↗︎ 15% em relação ao mês passado"
-                  icon={<Users className="h-4 w-4 text-muted-foreground" />}
-                />
+            <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <AnimatedElement type="scale" delay={0.1}>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total de Clientes</CardTitle>
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">127</div>
+                    <p className="text-xs text-muted-foreground">
+                      +5 no último mês
+                    </p>
+                  </CardContent>
+                </Card>
               </AnimatedElement>
-              
-              <AnimatedElement type="slide" delay={0.2}>
-                <MetricCard 
-                  title="Conversas Ativas" 
-                  value="32"
-                  description="↘︎ 5% em relação a ontem"
-                  icon={<MessageSquare className="h-4 w-4 text-muted-foreground" />}
-                />
+
+              <AnimatedElement type="scale" delay={0.2}>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Taxa de Retenção</CardTitle>
+                    <ArrowUpRight className="h-4 w-4 text-primary" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">95%</div>
+                    <p className="text-xs text-muted-foreground">
+                      +2% em relação ao mês anterior
+                    </p>
+                  </CardContent>
+                </Card>
               </AnimatedElement>
-              
-              <AnimatedElement type="slide" delay={0.3}>
-                <MetricCard 
-                  title="Satisfação do Cliente" 
-                  value="94%"
-                  description="↗︎ 2% em relação à semana passada"
-                  icon={<ArrowUpRight className="h-4 w-4 text-muted-foreground" />}
-                />
+
+              <AnimatedElement type="scale" delay={0.3}>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">NPS Médio</CardTitle>
+                    <BarChart3 className="h-4 w-4 text-primary" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">8.7</div>
+                    <p className="text-xs text-muted-foreground">
+                      +0.3 em relação ao mês anterior
+                    </p>
+                  </CardContent>
+                </Card>
               </AnimatedElement>
-              
-              <AnimatedElement type="slide" delay={0.4}>
-                <MetricCard 
-                  title="Recomendações IA" 
-                  value="16"
-                  description="Novas sugestões hoje"
-                  icon={<Brain className="h-4 w-4 text-muted-foreground" />}
-                />
+
+              <AnimatedElement type="scale" delay={0.4}>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Conversas Ativas</CardTitle>
+                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">23</div>
+                    <p className="text-xs text-muted-foreground">
+                      8 aguardando resposta
+                    </p>
+                  </CardContent>
+                </Card>
               </AnimatedElement>
-            </div>
+            </section>
             
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <AnimatedElement className="col-span-4" type="fade" delay={0.5}>

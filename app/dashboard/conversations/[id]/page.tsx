@@ -63,6 +63,8 @@ export default function ConversationDetailPage() {
   const [conversation, setConversation] = useState<MockConversation | null>(null);
   const [messages, setMessages] = useState<MockMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
   // Carregar dados da conversa
   useEffect(() => {
@@ -157,6 +159,20 @@ export default function ConversationDetailPage() {
         updatedAt: Date.now() 
       };
     });
+  };
+
+  const handleFileSelect = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      // Aqui você pode implementar o upload do arquivo
+      // Por exemplo:
+      // handleFileUpload(file);
+    }
   };
 
   if (loading) {
@@ -331,9 +347,21 @@ export default function ConversationDetailPage() {
             <CardFooter className="border-t p-3">
               {conversation.status === "open" ? (
                 <div className="flex w-full items-center gap-2">
-                  <Button variant="outline" size="icon">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+                  />
+                  <Button variant="outline" size="icon" onClick={handleFileSelect}>
                     <Paperclip className="h-4 w-4" />
                   </Button>
+                  {selectedFile && (
+                    <span className="text-xs text-muted-foreground">
+                      {selectedFile.name}
+                    </span>
+                  )}
                   <Input
                     placeholder="Digite sua mensagem..."
                     value={newMessage}

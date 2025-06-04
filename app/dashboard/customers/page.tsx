@@ -10,6 +10,9 @@ import { PageTransition } from "@/components/ui/page-transition";
 import { AnimatedElement } from "@/components/ui/animated-element";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Customer {
   id: string;
@@ -24,10 +27,33 @@ interface Customer {
   projects: number;
 }
 
+interface PageTransitionProps {
+  children: React.ReactNode;
+}
+
+interface AnimatedElementProps {
+  children: React.ReactNode;
+  type: "fade" | "slide" | "scale";
+  delay?: number;
+}
+
 export default function CustomersPage() {
   const [loading, setLoading] = useState(true);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    segment: "",
+    industry: "",
+    status: ""
+  });
+  const [showNewCustomerDialog, setShowNewCustomerDialog] = useState(false);
+  const [newCustomer, setNewCustomer] = useState({
+    name: "",
+    segment: "",
+    industry: "",
+    status: "active"
+  });
   
   useEffect(() => {
     // Simulando o carregamento de dados de clientes
@@ -103,12 +129,31 @@ export default function CustomersPage() {
   }, []);
   
   // Filtragem de clientes com base na busca
-  const filteredCustomers = customers.filter(customer => 
+  const filteredCustomers = customers.filter((customer: Customer) => 
     customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     customer.industry.toLowerCase().includes(searchQuery.toLowerCase()) ||
     customer.contactPerson.toLowerCase().includes(searchQuery.toLowerCase())
   );
   
+  const handleRefresh = () => {
+    setLoading(true);
+    // Aqui você pode recarregar os dados dos clientes
+    // Por exemplo:
+    // fetchCustomers().then(() => setLoading(false));
+    setTimeout(() => setLoading(false), 1000); // Simulação
+  };
+
+  const handleCreateCustomer = () => {
+    // Aqui você pode implementar a criação do cliente
+    // Por exemplo:
+    // createCustomer(newCustomer).then(() => {
+    //   setShowNewCustomerDialog(false);
+    //   handleRefresh();
+    // });
+    setShowNewCustomerDialog(false);
+    handleRefresh();
+  };
+
   return (
     <PageTransition>
       <div className="flex flex-col gap-6">
@@ -120,10 +165,65 @@ export default function CustomersPage() {
                 Gerencie e acompanhe seus clientes
               </p>
             </div>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Cliente
-            </Button>
+            <Dialog open={showNewCustomerDialog} onOpenChange={setShowNewCustomerDialog}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Cliente
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Novo Cliente</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="name">Nome</Label>
+                    <Input
+                      id="name"
+                      value={newCustomer.name}
+                      onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="segment">Segmento</Label>
+                    <Select
+                      value={newCustomer.segment}
+                      onValueChange={(value) => setNewCustomer({ ...newCustomer, segment: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o segmento" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="enterprise">Enterprise</SelectItem>
+                        <SelectItem value="mid-market">Mid-Market</SelectItem>
+                        <SelectItem value="smb">SMB</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="industry">Indústria</Label>
+                    <Select
+                      value={newCustomer.industry}
+                      onValueChange={(value) => setNewCustomer({ ...newCustomer, industry: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a indústria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="technology">Tecnologia</SelectItem>
+                        <SelectItem value="finance">Finanças</SelectItem>
+                        <SelectItem value="healthcare">Saúde</SelectItem>
+                        <SelectItem value="retail">Varejo</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button onClick={handleCreateCustomer} className="w-full">
+                    Criar Cliente
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </AnimatedElement>
 
@@ -140,11 +240,77 @@ export default function CustomersPage() {
               />
             </div>
             <div className="flex gap-2">
-              <Button variant="outline">
-                <Filter className="h-4 w-4 mr-2" />
-                Filtrar
-              </Button>
-              <Button variant="outline">
+              <Dialog open={showFilters} onOpenChange={setShowFilters}>
+                <DialogTrigger asChild>
+                  <Button variant="outline">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Filtrar
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Filtros</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label>Segmento</Label>
+                      <Select
+                        value={filters.segment}
+                        onValueChange={(value) => setFilters({ ...filters, segment: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Todos os segmentos" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Todos</SelectItem>
+                          <SelectItem value="enterprise">Enterprise</SelectItem>
+                          <SelectItem value="mid-market">Mid-Market</SelectItem>
+                          <SelectItem value="smb">SMB</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Indústria</Label>
+                      <Select
+                        value={filters.industry}
+                        onValueChange={(value) => setFilters({ ...filters, industry: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Todas as indústrias" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Todas</SelectItem>
+                          <SelectItem value="technology">Tecnologia</SelectItem>
+                          <SelectItem value="finance">Finanças</SelectItem>
+                          <SelectItem value="healthcare">Saúde</SelectItem>
+                          <SelectItem value="retail">Varejo</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Status</Label>
+                      <Select
+                        value={filters.status}
+                        onValueChange={(value) => setFilters({ ...filters, status: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Todos os status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Todos</SelectItem>
+                          <SelectItem value="active">Ativo</SelectItem>
+                          <SelectItem value="inactive">Inativo</SelectItem>
+                          <SelectItem value="pending">Pendente</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button onClick={() => setShowFilters(false)} className="w-full">
+                      Aplicar Filtros
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <Button variant="outline" onClick={handleRefresh}>
                 <RefreshCcw className="h-4 w-4" />
               </Button>
             </div>

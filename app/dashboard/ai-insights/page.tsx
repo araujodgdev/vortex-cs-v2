@@ -3,13 +3,62 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Brain, TrendingUp, AlertTriangle, CheckCircle, BarChart3, Users, MessageSquare } from "lucide-react";
+import { Brain, TrendingUp, AlertTriangle, CheckCircle, BarChart3, Users, MessageSquare, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageTransition } from "@/components/ui/page-transition";
 import { AnimatedElement } from "@/components/ui/animated-element";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { toast } from "sonner";
+
+interface Signal {
+  id: string;
+  text: string;
+}
+
+interface Insight {
+  type: 'recommendation' | 'trend' | 'risk';
+  title: string;
+  description: string;
+  impact?: string;
+  category?: string;
+  effort?: string;
+  customer?: string;
+  risk?: string;
+  probability?: number;
+  signals?: Signal[];
+}
 
 export default function AIInsightsPage() {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [insights, setInsights] = useState<Insight[]>([]);
+
+  const handleGenerateInsights = async () => {
+    setIsGenerating(true);
+    try {
+      const response = await fetch('/api/insights/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+
+      setInsights(data.insights);
+      toast.success('Novos insights gerados com sucesso!');
+    } catch (error) {
+      console.error('Erro ao gerar insights:', error);
+      toast.error('Erro ao gerar novos insights. Tente novamente.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <PageTransition>
       <div className="flex flex-col gap-5">
@@ -22,9 +71,18 @@ export default function AIInsightsPage() {
               </p>
             </div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button>
-                <Brain className="h-4 w-4 mr-2" />
-                Gerar Novos Insights
+              <Button onClick={handleGenerateInsights} disabled={isGenerating}>
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Gerando Insights...
+                  </>
+                ) : (
+                  <>
+                    <Brain className="h-4 w-4 mr-2" />
+                    Gerar Novos Insights
+                  </>
+                )}
               </Button>
             </motion.div>
           </div>
@@ -46,91 +104,54 @@ export default function AIInsightsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <AnimatedElement type="slide" delay={0.1}>
-                  <RecommendationCard 
-                    title="Melhoria do Processo de Onboarding"
-                    description="A análise de sessões recentes de onboarding sugere que os clientes enfrentam dificuldades na etapa de integração da API. Considere criar documentação adicional ou tutoriais em vídeo."
-                    impact="Alta"
-                    category="Onboarding"
-                    effort="Média"
-                  />
-                </AnimatedElement>
-                
-                <AnimatedElement type="slide" delay={0.2}>
-                  <RecommendationCard 
-                    title="Campanha de Adoção de Recursos"
-                    description="12 clientes empresariais não utilizaram os novos recursos de relatórios. Uma campanha de email direcionada com casos de uso poderia aumentar a adoção em cerca de 35%."
-                    impact="Média"
-                    category="Adoção de Recursos"
-                    effort="Baixa"
-                  />
-                </AnimatedElement>
-                
-                <AnimatedElement type="slide" delay={0.3}>
-                  <RecommendationCard 
-                    title="Expansão da Equipe de Sucesso do Cliente"
-                    description="Os tempos de resposta aumentaram 15% no último trimestre. Com base nas projeções de crescimento, considere contratar 2 CSMs adicionais nos próximos 3 meses."
-                    impact="Alta"
-                    category="Recursos da Equipe"
-                    effort="Alta"
-                  />
-                </AnimatedElement>
+                {insights
+                  .filter(insight => insight.type === 'recommendation')
+                  .map((insight, index) => (
+                    <AnimatedElement key={index} type="slide" delay={0.1 * index}>
+                      <RecommendationCard 
+                        title={insight.title}
+                        description={insight.description}
+                        impact={insight.impact as "Alta" | "Média" | "Baixa"}
+                        category={insight.category || ""}
+                        effort={insight.effort as "Alta" | "Média" | "Baixa"}
+                      />
+                    </AnimatedElement>
+                  ))}
+                {insights.filter(insight => insight.type === 'recommendation').length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Nenhuma recomendação disponível. Gere novos insights para ver recomendações.
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
           
           <TabsContent value="trends" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Tendência de Sentimento do Cliente</CardTitle>
-                  <CardDescription>
-                    Análise de conversas com clientes ao longo do tempo
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[300px] flex items-center justify-center bg-muted/20 rounded-md">
-                    <TrendingUp className="h-8 w-8 text-muted-foreground" />
-                    <span className="ml-2 text-sm text-muted-foreground">Visualização de tendência de sentimento seria exibida aqui</span>
+            <Card>
+              <CardHeader>
+                <CardTitle>Tendências de Sucesso do Cliente</CardTitle>
+                <CardDescription>
+                  Análise de tendências e padrões identificados pela IA
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {insights
+                  .filter(insight => insight.type === 'trend')
+                  .map((insight, index) => (
+                    <AnimatedElement key={index} type="slide" delay={0.1 * index}>
+                      <TrendInsight 
+                        title={insight.title}
+                        description={insight.description}
+                      />
+                    </AnimatedElement>
+                  ))}
+                {insights.filter(insight => insight.type === 'trend').length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Nenhuma tendência disponível. Gere novos insights para ver análises de tendências.
                   </div>
-                  <div className="mt-4 space-y-2">
-                    <TrendInsight 
-                      title="Tendência positiva no feedback sobre UI/UX"
-                      description="Menções positivas sobre a nova UI aumentaram 27% desde o último lançamento."
-                    />
-                    <TrendInsight 
-                      title="Redução nas preocupações sobre desempenho"
-                      description="Menções de problemas de desempenho diminuíram 18% nos últimos 30 dias."
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Tendências de Uso de Recursos</CardTitle>
-                  <CardDescription>
-                    Recursos mais e menos utilizados ao longo do tempo
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[300px] flex items-center justify-center bg-muted/20 rounded-md">
-                    <BarChart3 className="h-8 w-8 text-muted-foreground" />
-                    <span className="ml-2 text-sm text-muted-foreground">Visualização de uso de recursos seria exibida aqui</span>
-                  </div>
-                  <div className="mt-4 space-y-2">
-                    <TrendInsight 
-                      title="Uso do dashboard de análises em crescimento"
-                      description="O uso do dashboard de análises cresceu 42% mês a mês."
-                    />
-                    <TrendInsight 
-                      title="Integração de API subutilizada"
-                      description="Apenas 23% dos clientes elegíveis estão usando os recursos de integração de API."
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
           
           <TabsContent value="risks" className="space-y-4">
@@ -142,38 +163,23 @@ export default function AIInsightsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <RiskCard 
-                  customer="Acme Inc"
-                  risk="Risco de Churn"
-                  probability={75}
-                  signals={[
-                    { id: "signal-1", text: "Uso reduzido nos últimos 30 dias" },
-                    { id: "signal-2", text: "Tickets de suporte sobre recursos de concorrentes" },
-                    { id: "signal-3", text: "Renovação de contrato em 45 dias" }
-                  ]}
-                />
-                
-                <RiskCard 
-                  customer="TechGiant"
-                  risk="Bloqueador de Expansão"
-                  probability={62}
-                  signals={[
-                    { id: "signal-4", text: "Múltiplos pedidos de recursos empresariais" },
-                    { id: "signal-5", text: "Uso no limite da assinatura por 3 meses consecutivos" },
-                    { id: "signal-6", text: "Avaliação de concorrente mencionada em chamada recente" }
-                  ]}
-                />
-                
-                <RiskCard 
-                  customer="Global Services"
-                  risk="Problemas de Adoção"
-                  probability={58}
-                  signals={[
-                    { id: "signal-7", text: "Usando apenas 2 de 5 recursos principais" },
-                    { id: "signal-8", text: "Baixo engajamento de usuários administradores" },
-                    { id: "signal-9", text: "Onboarding incompleto para 4 membros da equipe" }
-                  ]}
-                />
+                {insights
+                  .filter(insight => insight.type === 'risk')
+                  .map((insight, index) => (
+                    <AnimatedElement key={index} type="slide" delay={0.1 * index}>
+                      <RiskCard 
+                        customer={insight.customer || ""}
+                        risk={insight.risk || ""}
+                        probability={insight.probability || 0}
+                        signals={insight.signals || []}
+                      />
+                    </AnimatedElement>
+                  ))}
+                {insights.filter(insight => insight.type === 'risk').length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Nenhum risco detectado. Gere novos insights para ver avaliações de risco.
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -250,12 +256,6 @@ function TrendInsight({
       <p className="text-xs text-muted-foreground">{description}</p>
     </div>
   );
-}
-
-// Define the signal type
-interface Signal {
-  id: string;
-  text: string;
 }
 
 function RiskCard({ 
