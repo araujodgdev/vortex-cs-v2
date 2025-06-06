@@ -81,11 +81,11 @@ A IA será integrada para agregar valor e inteligência à plataforma:
 
 ## Executando o Projeto
 
-# Pela IDE (Local)
+### Pela IDE (Local)
 * Abra a IDE de preferência
 * Clone o repositório com: git clone https://github.com/araujodgdev/vortex-cs-v2
 * Abra o terminal e baixe as dependências: npm install
 * Rode o projeto: npm run dev
 
-# Pelo Link Vercel
+### Pelo Link Vercel
 * Abra o link do projeto com deploy do Vercel: [Link aqui]
